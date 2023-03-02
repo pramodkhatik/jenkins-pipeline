@@ -1,23 +1,32 @@
 pipeline {
-    agent any
+	agent any
 
-    tools {
-        maven "MAVEN"
-    }
+	tools {
+		maven "MAVEN"
+	}
 
-    stages {
-        stage('Initialize'){
-            steps{
-                echo "PATH = ${M2_HOME}/bin:${PATH}"
-                echo "M2_HOME = /opt/apache-maven-3.9.0"
-            }
-        }
-        stage('Build') {
-            steps {
-                dir("/var/lib/jenkins/workspace/Java_Pipeline_Job/my-app/") {
-                sh 'mvn clean package'
-                }
-                }
-            }
-        }
-     }
+	stages {
+		stage('Initialize') {
+			steps {
+				echo "PATH = ${M2_HOME}/bin:${PATH}"
+				echo "M2_HOME = /opt/apache-maven-3.9.0"
+			}
+		}
+		stage('Build') {
+			steps {
+				dir("/var/lib/jenkins/workspace/Java_Pipeline_Job/my-app/") {
+					sh 'mvn -B -DskipTests clean package'
+				}
+
+			}
+		}
+	}
+	post {
+		always {
+			junit(
+				allowEmptyResults: true,
+				testResults: '*/test-reports/.xml'
+			)
+		}
+	}
+}
