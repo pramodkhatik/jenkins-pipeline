@@ -1,9 +1,22 @@
 pipeline {
     agent any
+
+    tools {
+        maven "MAVEN"
+    }
+
     stages {
+        stage('Initialize'){
+            steps{
+                echo "PATH = ${M2_HOME}/bin:${PATH}"
+                echo "M2_HOME = /opt/apache-maven-3.9.0"
+            }
+        }
         stage('Build') {
             steps {
-                echo "This is first minimal pipeline."
+                dir("/var/lib/jenkins/workspace/Java_Pipeline_Job/my-app/") {
+                sh 'mvn clean package'
+                }
                 }
             }
         }
