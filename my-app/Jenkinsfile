@@ -20,7 +20,26 @@ pipeline {
 
 			}
 		}
-       
+       stage("Build and analyze code") {
+    steps {
+        withSonarQubeEnv('SonarQube') {
+            sh 'mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dmaven.test.failure.ignore=true'
+        }
+    }
+}
+
+stage("Wait for quality gate evaluation") {
+    steps {
+        timeout(time: 1, unit: 'HOURS') {
+            script {
+                def qg = waitForQualityGate()
+                if (qg.status != 'OK') {
+                    error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                }
+            }
+        }
+    }
+}
 		stage("Publish to Nexus Repository Manager") {
 			steps {
 				script {
