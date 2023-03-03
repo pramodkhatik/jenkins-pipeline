@@ -70,7 +70,7 @@ pipeline {
 
 									classifier: '',
 
-									file: "pom.xml",
+									file: "my-app/pom.xml",
 
 									type: "pom"
 								]
