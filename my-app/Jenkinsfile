@@ -34,8 +34,8 @@ pipeline {
 							nexusVersion: 'nexus3',
 							protocol: 'http',
 							nexusUrl: '18.188.169.30:8081/',
-							groupId: 'com.mycompany.app',
-							version: '1.0-SNAPSHOT',
+							groupId: 'pom.com.mycompany.app',
+							version: 'pom.1.0-SNAPSHOT',
 							repository: 'maven-java-pipeline-repository',
 							credentialsId: 'NEXUS_CRED',
 							artifacts: [
