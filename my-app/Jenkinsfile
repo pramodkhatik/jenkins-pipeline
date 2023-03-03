@@ -20,16 +20,12 @@ pipeline {
 
 			}
 		}
-        stage("Change directory") {
-                    steps {
-                    dir("${workspace}/my-app"){}
-                }
-        }
+       
 		stage("Publish to Nexus Repository Manager") {
 			steps {
 				script {
                     echo "$workspace"
-					pom = readMavenPom file: "pom.xml";
+					pom = readMavenPom file: "/var/lib/jenkins/workspace/Java_Pipeline_Job/my-app/pom.xml";
 					filesByGlob = findFiles(glob: "target/*.${pom.packaging}");
 					echo "${filesByGlob[0].name} ${filesByGlob[0].path} ${filesByGlob[0].directory} ${filesByGlob[0].length} ${filesByGlob[0].lastModified}"
 					artifactPath = filesByGlob[0].path;
