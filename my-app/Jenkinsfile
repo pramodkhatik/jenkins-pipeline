@@ -21,7 +21,7 @@ pipeline {
 			}
 		}
         stage("Change directory") {
-                    steps{
+                    steps {
                     dir("${workspace}/my-app")
                 }
         }
