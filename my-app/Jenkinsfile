@@ -24,7 +24,7 @@ pipeline {
 			steps {
 				script {
                     echo "$workspace"
-                    dir(${workspace}/my-app)
+                    dir("${workspace}"/my-app)
                     ''' sh cd "$workspace/my-app" '''
 					pom = readMavenPom file: "pom.xml";
 					filesByGlob = findFiles(glob: "target/*.${pom.packaging}");
