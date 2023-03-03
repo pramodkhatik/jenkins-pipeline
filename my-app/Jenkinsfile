@@ -22,7 +22,7 @@ pipeline {
 		}
         stage("Change directory") {
                     steps {
-                    dir("${workspace}/my-app")
+                    dir("${workspace}/my-app"){}
                 }
         }
 		stage("Publish to Nexus Repository Manager") {
