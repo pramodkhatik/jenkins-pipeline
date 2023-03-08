@@ -33,7 +33,7 @@ pipeline {
                     def workspace = pwd()
                     echo "You are currently in $workspace"
 					pom = readMavenPom file: "/var/lib/jenkins/workspace/Java_Pipeline_Job/my-app/pom.xml";
-					filesByGlob = findFiles(glob: "target/*.${pom.packaging}")
+					filesByGlob = findFiles(glob: "/var/lib/jenkins/workspace/Java_Pipeline_Job/my-app/target/**/*.${pom.packaging}")
                     echo "Files found: ${filesByGlob}"
 					if (filesByGlob.length > 0) {
 						def artifactPath = filesByGlob[0].path
