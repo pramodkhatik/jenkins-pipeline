@@ -28,45 +28,38 @@ pipeline {
 			}
 		}
 		stage("Publish to Nexus Repository Manager") {
-			steps {
-				script {
-					echo "$workspace"
-					pom = readMavenPom file: "/var/lib/jenkins/workspace/Java_Pipeline_Job/my-app/pom.xml";
-					echo "$workspace"
-					sh "ls -la /var/lib/jenkins/workspace/Java_Pipeline_Job/my-app/target"
-					filesByGlob = findFiles(glob: "target/*.${pom.packaging}");
-					echo "Files found: ${filesByGlob}"
-					echo "${filesByGlob[0].name} ${filesByGlob[0].path} ${filesByGlob[0].directory} ${filesByGlob[0].length} ${filesByGlob[0].lastModified}"
-					artifactPath = filesByGlob[0].path;
-					artifactExists = fileExists artifactPath;
-					if (artifactExists) {
-						echo "* File: ${artifactPath}, group: ${pom.groupId}, packaging: ${pom.packaging}, version ${pom.version}";
-						nexusArtifactUploader(
-							nexusVersion: 'nexus3',
-							protocol: 'http',
-							nexusUrl: '13.59.139.160:8081/',
-							groupId: 'pom.com.mycompany.app',
-							version: 'pom.1.0-SNAPSHOT',
-							repository: 'maven-java-pipeline-repository',
-							credentialsId: 'NEXUS_CRED',
-							artifacts: [
-								[artifactId: 'pom.my-app',
-									classifier: '',
-									file: artifactPath,
-									type: pom.packaging
-								],
-								[artifactId: 'pom.my-app',
-									classifier: '',
-									file: "pom.xml",
-									type: "pom"
-								]
-							]
-						);
-					} else {
-						error "* File: ${artifactPath}, could not be found";
-					}
-				}
-			}
-		}
-	}
+    steps {
+        script {
+            def workspace = pwd()
+            pom = readMavenPom file: "${workspace}/pom.xml"
+            filesByGlob = findFiles(glob: "${workspace}/target/*.${pom.packaging}")
+            if (filesByGlob.length > 0) {
+                def artifactPath = filesByGlob[0].path
+                echo "* File: ${artifactPath}, group: ${pom.groupId}, packaging: ${pom.packaging}, version ${pom.version}"
+                nexusArtifactUploader(
+                    nexusVersion: 'nexus3',
+                    protocol: 'http',
+                    nexusUrl: '13.59.139.160:8081/',
+                    groupId: pom.groupId,
+                    version: pom.version,
+                    repository: 'maven-java-pipeline-repository',
+                    credentialsId: 'NEXUS_CRED',
+                    artifacts: [
+                        [artifactId: pom.artifactId,
+                            classifier: '',
+                            file: artifactPath,
+                            type: pom.packaging
+                        ],
+                        [artifactId: pom.artifactId,
+                            classifier: '',
+                            file: "${workspace}/pom.xml",
+                            type: 'pom'
+                        ]
+                    ]
+                )
+            } else {
+                error "* No files found to upload"
+            }
+        }
+    }
 }
