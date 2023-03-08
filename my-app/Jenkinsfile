@@ -30,8 +30,11 @@ pipeline {
 		stage("Publish to Nexus Repository Manager") {
 			steps {
 				script {
+                    def workspace = pwd()
+                    echo "You are currently in $workspace"
 					pom = readMavenPom file: "/var/lib/jenkins/workspace/Java_Pipeline_Job/my-app/pom.xml";
 					filesByGlob = findFiles(glob: "target/*.${pom.packaging}")
+                    echo "Files found: ${filesByGlob}"
 					if (filesByGlob.length > 0) {
 						def artifactPath = filesByGlob[0].path
 						echo "* File: ${artifactPath}, group: ${pom.groupId}, packaging: ${pom.packaging}, version ${pom.version}"
