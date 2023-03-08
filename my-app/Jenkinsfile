@@ -31,7 +31,7 @@ pipeline {
 			steps {
 				script {
 					def workspace = pwd()
-					pom = readMavenPom file: "${workspace}/pom.xml"
+					pom = readMavenPom file: "/var/lib/jenkins/workspace/Java_Pipeline_Job/my-app/pom.xml";
 					filesByGlob = findFiles(glob: "${workspace}/target/*.${pom.packaging}")
 					if (filesByGlob.length > 0) {
 						def artifactPath = filesByGlob[0].path
