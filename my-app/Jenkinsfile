@@ -22,7 +22,7 @@ pipeline {
 		}
 		stage('Stage 2') {
 			steps {
-				sleep time: 180, unit: 'SECONDS' // introduce a 5-minute delay
+				sleep time: 60, unit: 'SECONDS' // introduce a 5-minute delay
 				// do something in stage 2
 				echo "Waiting for 3 minutes."
 			}
@@ -30,9 +30,8 @@ pipeline {
 		stage("Publish to Nexus Repository Manager") {
 			steps {
 				script {
-					def workspace = pwd()
 					pom = readMavenPom file: "/var/lib/jenkins/workspace/Java_Pipeline_Job/my-app/pom.xml";
-					filesByGlob = findFiles(glob: "/target/*.${pom.packaging}")
+					filesByGlob = findFiles(glob: "target/*.${pom.packaging}")
 					if (filesByGlob.length > 0) {
 						def artifactPath = filesByGlob[0].path
 						echo "* File: ${artifactPath}, group: ${pom.groupId}, packaging: ${pom.packaging}, version ${pom.version}"
