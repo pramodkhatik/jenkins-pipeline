@@ -20,36 +20,23 @@ pipeline {
 
 			}
 		}
-       stage("Build and analyze code") {
-    steps {
-        withSonarQubeEnv('SonarQube') {
-            sh 'mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dmaven.test.failure.ignore=true'
-        }
-    }
-}
-
-stage("Wait for quality gate evaluation") {
-    steps {
-        timeout(time: 1, unit: 'HOURS') {
-            script {
-                def qg = waitForQualityGate()
-                if (qg.status != 'OK') {
-                    error "Pipeline aborted due to quality gate failure: ${qg.status}"
-                }
-            }
-        }
-    }
-}
+		stage('Stage 2') {
+			steps {
+				sleep time: 180, unit: 'SECONDS' // introduce a 5-minute delay
+				// do something in stage 2
+                echo "Waiting for 3 minutes."
+			}
+		}
 		stage("Publish to Nexus Repository Manager") {
 			steps {
 				script {
-                    echo "$workspace"
+					echo "$workspace"
 					pom = readMavenPom file: "/var/lib/jenkins/workspace/Java_Pipeline_Job/my-app/pom.xml";
-                    echo "$workspace"
-                    sh "ls -la /var/lib/jenkins/workspace/Java_Pipeline_Job/my-app/target"
+					echo "$workspace"
+					sh "ls -la /var/lib/jenkins/workspace/Java_Pipeline_Job/my-app/target"
 					filesByGlob = findFiles(glob: "target/*.${pom.packaging}");
 					echo "Files found: ${filesByGlob}"
-                    echo "${filesByGlob[0].name} ${filesByGlob[0].path} ${filesByGlob[0].directory} ${filesByGlob[0].length} ${filesByGlob[0].lastModified}"
+					echo "${filesByGlob[0].name} ${filesByGlob[0].path} ${filesByGlob[0].directory} ${filesByGlob[0].length} ${filesByGlob[0].lastModified}"
 					artifactPath = filesByGlob[0].path;
 					artifactExists = fileExists artifactPath;
 					if (artifactExists) {
@@ -57,7 +44,7 @@ stage("Wait for quality gate evaluation") {
 						nexusArtifactUploader(
 							nexusVersion: 'nexus3',
 							protocol: 'http',
-							nexusUrl: '18.188.169.30:8081/',
+							nexusUrl: '13.59.139.160:8081/',
 							groupId: 'pom.com.mycompany.app',
 							version: 'pom.1.0-SNAPSHOT',
 							repository: 'maven-java-pipeline-repository',
