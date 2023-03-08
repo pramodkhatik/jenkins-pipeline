@@ -24,42 +24,44 @@ pipeline {
 			steps {
 				sleep time: 180, unit: 'SECONDS' // introduce a 5-minute delay
 				// do something in stage 2
-                echo "Waiting for 3 minutes."
+				echo "Waiting for 3 minutes."
 			}
 		}
 		stage("Publish to Nexus Repository Manager") {
-    steps {
-        script {
-            def workspace = pwd()
-            pom = readMavenPom file: "${workspace}/pom.xml"
-            filesByGlob = findFiles(glob: "${workspace}/target/*.${pom.packaging}")
-            if (filesByGlob.length > 0) {
-                def artifactPath = filesByGlob[0].path
-                echo "* File: ${artifactPath}, group: ${pom.groupId}, packaging: ${pom.packaging}, version ${pom.version}"
-                nexusArtifactUploader(
-                    nexusVersion: 'nexus3',
-                    protocol: 'http',
-                    nexusUrl: '13.59.139.160:8081/',
-                    groupId: pom.groupId,
-                    version: pom.version,
-                    repository: 'maven-java-pipeline-repository',
-                    credentialsId: 'NEXUS_CRED',
-                    artifacts: [
-                        [artifactId: pom.artifactId,
-                            classifier: '',
-                            file: artifactPath,
-                            type: pom.packaging
-                        ],
-                        [artifactId: pom.artifactId,
-                            classifier: '',
-                            file: "${workspace}/pom.xml",
-                            type: 'pom'
-                        ]
-                    ]
-                )
-            } else {
-                error "* No files found to upload"
-            }
-        }
+			steps {
+				script {
+					def workspace = pwd()
+					pom = readMavenPom file: "${workspace}/pom.xml"
+					filesByGlob = findFiles(glob: "${workspace}/target/*.${pom.packaging}")
+					if (filesByGlob.length > 0) {
+						def artifactPath = filesByGlob[0].path
+						echo "* File: ${artifactPath}, group: ${pom.groupId}, packaging: ${pom.packaging}, version ${pom.version}"
+						nexusArtifactUploader(
+							nexusVersion: 'nexus3',
+							protocol: 'http',
+							nexusUrl: '13.59.139.160:8081/',
+							groupId: pom.groupId,
+							version: pom.version,
+							repository: 'maven-java-pipeline-repository',
+							credentialsId: 'NEXUS_CRED',
+							artifacts: [
+								[artifactId: pom.artifactId,
+									classifier: '',
+									file: artifactPath,
+									type: pom.packaging
+								],
+								[artifactId: pom.artifactId,
+									classifier: '',
+									file: "${workspace}/pom.xml",
+									type: 'pom'
+								]
+							]
+						)
+					} else {
+						error "* No files found to upload"
+					}
+				}
+			}
+		}
     }
 }
