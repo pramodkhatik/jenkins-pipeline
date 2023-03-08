@@ -31,7 +31,9 @@ pipeline {
 				script {
                     echo "You are currently in $WORKSPACE"
 					pom = readMavenPom file: "/var/lib/jenkins/workspace/Java_Pipeline_Job/my-app/pom.xml";
+                    echo "You are currently in $WORKSPACE"
 					filesByGlob = findFiles(glob: "my-app/target/*.${pom.packaging}")
+                    echo "You are currently in $WORKSPACE"
                     echo "Files found: ${filesByGlob}"
 					if (filesByGlob.length > 0) {
 						def artifactPath = filesByGlob[0].path
