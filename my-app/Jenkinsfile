@@ -24,7 +24,6 @@ pipeline {
 			steps {
 				sleep time: 60, unit: 'SECONDS' // introduce a 5-minute delay
 				// do something in stage 2
-				echo "Waiting for 3 minutes."
 			}
 		}
 		stage("Publish to Nexus Repository Manager") {
@@ -33,7 +32,7 @@ pipeline {
                     def workspace = pwd()
                     echo "You are currently in $workspace"
 					pom = readMavenPom file: "/var/lib/jenkins/workspace/Java_Pipeline_Job/my-app/pom.xml";
-					filesByGlob = findFiles(glob: "/var/lib/jenkins/workspace/Java_Pipeline_Job/my-app/target/**/*.${pom.packaging}")
+					filesByGlob = findFiles(glob: "var/lib/jenkins/workspace/Java_Pipeline_Job/my-app/target/**/*.${pom.packaging}")
                     echo "Files found: ${filesByGlob}"
 					if (filesByGlob.length > 0) {
 						def artifactPath = filesByGlob[0].path
